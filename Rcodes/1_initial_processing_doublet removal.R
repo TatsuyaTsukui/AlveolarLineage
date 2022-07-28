@@ -25,7 +25,7 @@ nExp_poi <- round(0.02*nrow(d0_1@meta.data))
 nExp_poi.adj <- round(nExp_poi*(1-homotypic.prop))
 
 d0_1 <- doubletFinder_v3(d0_1, PCs = 1:15, pN = 0.25, pK = 0.28, nExp = nExp_poi, reuse.pANN = FALSE, sct = FALSE)
-d0_1 <- doubletFinder_v3(d0_1, PCs = 1:15, pN = 0.25, pK = 0.28, nExp = nExp_poi.adj, reuse.pANN = "pANN_0.25_0.28_446", sct = FALSE)
+d0_1 <- doubletFinder_v3(d0_1, PCs = 1:15, pN = 0.25, pK = 0.28, nExp = nExp_poi.adj, reuse.pANN = "pANN_0.25_0.28_81", sct = FALSE)
 
 d0_1 <- subset(d0_1, subset = DF.classifications_0.25_0.28_62 == "Singlet")
 saveRDS(d0_1, file = "d0_1.rds")
@@ -57,9 +57,9 @@ nExp_poi.adj <- round(nExp_poi*(1-homotypic.prop))
 d0_2 <- doubletFinder_v3(d0_2, PCs = 1:17, pN = 0.25, pK = 0.01, nExp = nExp_poi, reuse.pANN = FALSE, sct = FALSE)
 d0_2 <- doubletFinder_v3(d0_2, PCs = 1:17, pN = 0.25, pK = 0.01, nExp = nExp_poi.adj, reuse.pANN = "pANN_0.25_0.01_84", sct = FALSE)
 
-DimPlot(d0_2, group.by = "DF.classifications_0.25_0.01_69")
+DimPlot(d0_2, group.by = "DF.classifications_0.25_0.01_64")
 
-d0_2 <- subset(d0_2, subset = DF.classifications_0.25_0.01_69 == "Singlet")
+d0_2 <- subset(d0_2, subset = DF.classifications_0.25_0.01_64 == "Singlet")
 saveRDS(d0_2, file = "d0_2.rds")
 
 
@@ -87,9 +87,9 @@ nExp_poi <- round(0.02*nrow(d0_3@meta.data))
 nExp_poi.adj <- round(nExp_poi*(1-homotypic.prop))
 
 d0_3 <- doubletFinder_v3(d0_3, PCs = 1:17, pN = 0.25, pK = 0.01, nExp = nExp_poi, reuse.pANN = FALSE, sct = FALSE)
-d0_3 <- doubletFinder_v3(d0_3, PCs = 1:17, pN = 0.25, pK = 0.01, nExp = nExp_poi.adj, reuse.pANN = "pANN_0.25_0.01_84", sct = FALSE)
+d0_3 <- doubletFinder_v3(d0_3, PCs = 1:17, pN = 0.25, pK = 0.01, nExp = nExp_poi.adj, reuse.pANN = "pANN_0.25_0.01_69", sct = FALSE)
 
-DimPlot(d0_3, group.by = "DF.classifications_0.25_0.01_69")
+DimPlot(d0_3, group.by = "DF.classifications_0.25_0.01_50")
 
 d0_3 <- subset(d0_3, subset = DF.classifications_0.25_0.01_50 == "Singlet")
 saveRDS(d0_3, file = "d0_3.rds")
@@ -158,7 +158,7 @@ d7_2 <- doubletFinder_v3(d7_2, PCs = 1:20, pN = 0.25, pK = 0.005, nExp = nExp_po
 
 DimPlot(d7_2, group.by = "DF.classifications_0.25_0.005_51")
 
-d7_2 <- subset(d7_2, subset = DF.classifications_0.25_0.05_51 == "Singlet")
+d7_2 <- subset(d7_2, subset = DF.classifications_0.25_0.005_51 == "Singlet")
 saveRDS(d7_2, file = "d7_2.rds")
 
 
