@@ -9,7 +9,7 @@ library(ggplot2)
 MG <- readRDS(file = "MGcleaned.rds")
 
 ##subset alveolar, inflammatory, stress-activated, fibrotic, and proliferating to run Monocle3
-Trc <- subset(MG, idents = c("Alveolar1", "Alveolar2", "Inflammatory", "Stress-activated", "Fibrotic", "Proliferating"))
+Trc <- subset(MG, idents = c("Alveolar", "Inflammatory", "Stress-activated", "Fibrotic", "Proliferating"))
 Trc <- NormalizeData(Trc)
 Trc <- FindVariableFeatures(Trc)
 Trc <- RunFastMNN(object.list = SplitObject(Trc, split.by = "sample"))
@@ -17,7 +17,7 @@ Trc <- RunUMAP(Trc, reduction = "mnn", dims = 1:38)
 Trc <- FindNeighbors(Trc, reduction = "mnn", dims = 1:38)
 Trc <- FindClusters(Trc, resolution = 0.3)
 DimPlot(Trc, label = T)
-annotation <- c("Alveolar1", "Fibrotic", "Alveolar2", "Inflammatory", "Stress-ativated", "Proliferating")
+annotation <- c("Alveolar", "Fibrotic", "Alveolar", "Inflammatory", "Stress-ativated", "Proliferating")
 names(annotation) <- levels(Trc)
 Trc <- RenameIdents(Trc, annotation)
 
@@ -51,7 +51,7 @@ saveRDS(Trc.cds, file="Trc_cds.rds")
 
 
 ##subset alveolar, inflammatory, and fibrotic clusters to run Monocle3
-ltr <- subset(MG, idents = c("Alveolar1", "Alveolar2", "Inflammatory", "Fibrotic"))
+ltr <- subset(MG, idents = c("Alveolar",  "Inflammatory", "Fibrotic"))
 ltr <- FindVariableFeatures(ltr)
 ltr <- RunFastMNN(object.list = SplitObject(ltr, split.by = "sample"))
 ltr <- RunUMAP(ltr, reduction = "mnn", dims = 1:38)
