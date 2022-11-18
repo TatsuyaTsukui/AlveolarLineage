@@ -29,7 +29,7 @@ DimPlot(alpfb, group.by = "ID", label = T)
 
 alpfb.markers <- FindAllMarkers(alpfb, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
 
-annotation <- c("Alveolar1", "Alveolar2", "Inflammatory1", "Fibrotic", "Inflammatory2")
+annotation <- c("Alveolar", "Alveolar", "Inflammatory1", "Fibrotic", "Inflammatory2")
 names(annotation) <- levels(alpfb)
 alpfb <- RenameIdents(alpfb, annotation)
 saveRDS(file = "alpfb.rds")
@@ -96,14 +96,10 @@ getExpressedGenesFromSeuratObject <- function(seurat_object,
 expressed_genes <- getExpressedGenesFromSeuratObject(
   alpfb,unique(alpfb$seurat_clusters), min.pct=0.25)
 
-if(!file.exists("annotationhs.rds"))
-{
-  annotation <- fetchAnnotation(species="hs",
-                                ensembl_version=NULL,
-                                ensembl_host = NULL)
-  saveRDS(annotation, "annotationhs.rds")
-} 
-annotation <- readRDS("annotationhs.rds")
+annotation <- fetchAnnotation(species="hs",
+                              ensembl_version=NULL,
+                              ensembl_host = NULL)
+
 
 alpfb.markers$entrez_id <- as.character(annotation$entrez_id[
   match(alpfb.markers$gene, annotation$gene_name)])
@@ -114,9 +110,7 @@ background_entrez <- background_entrez[!is.na(background_entrez)]
 
 alpfb.markers.filtered <- alpfb.markers[alpfb.markers$p_val_adj < 0.05,]
 
-if(!file.exists("go.results.rds"))
-{
-  go.results <- runGO.all(results=alpfb.markers.filtered, 
+go.results <- runGO.all(results=alpfb.markers.filtered, 
                           species = "hs",
                           background_ids = background_entrez,
                           gene_id_col="entrez_id",
@@ -124,9 +118,6 @@ if(!file.exists("go.results.rds"))
                           sample_col="cluster",
                           p_col="p_val_adj",
                           p_threshold=0.05)
-  saveRDS(go.results, "go.results.rds")
-}
-go.results <- readRDS("go.results.rds")
 
 go.results.filtered <- go.results[go.results$ontology=="BP",]
 go.results.filtered <- filterGenesets(go.results.filtered, 
