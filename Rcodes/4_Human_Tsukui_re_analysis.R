@@ -13,7 +13,7 @@ library(biomaRt)
 
 #load seurat object of human mesenchymal cells from Tsukui et al. 2020
 #Email me tatsuya.tsukui@ucsf.edu if you need this seurat object
-hlin <- readRDS(file="E:\\Human_lung_10x_data\\R_analysis\\hLung0827.rds")
+hlin <- readRDS(file="hLung0827.rds")
 
 ##subset alveolar and pathologic fibroblasts
 alpfb <- subset(hlin, idents = c(1, 3))
@@ -151,7 +151,7 @@ library(SeuratWrappers)
 library(ggplot2)
 library(pheatmap)
                         
-MG <- readRDS(file = "MGcleaned.rds")
+MG <- readRDS(file = "MG.rds") #mouse seurat object
 alpfb <- readRDS(file = "alpfb.rds")
 MGpfb <- subset(MG, idents = c("Alveolar", "Inflammatory", "Stress-activated", "Fibrotic"))
                         
