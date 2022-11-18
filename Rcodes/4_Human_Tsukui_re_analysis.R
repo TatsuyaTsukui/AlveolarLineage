@@ -8,6 +8,7 @@ library(knitr)
 library(gsfisher)
 library(tidyr)
 library(scCustomize)
+library(biomaRt)
 
 
 #load seurat object of human mesenchymal cells from Tsukui et al. 2020
@@ -140,3 +141,55 @@ sampleEnrichmentDotplot(go.results.top,
                         fill_var = "odds.ratio",
                         maxl=50,
                         title="GO biological pathway")
+                        
+                        
+##Correlation alaysis for human and mouse emergent clusters
+library(dplyr)
+library(Seurat)
+library(patchwork)
+library(SeuratWrappers)
+library(ggplot2)
+library(pheatmap)
+                        
+MG <- readRDS(file = "MGcleaned.rds")
+alpfb <- readRDS(file = "alpfb.rds")
+MGpfb <- subset(MG, idents = c("Alveolar", "Inflammatory", "Stress-activated", "Fibrotic"))
+                        
+alpfb <- ScaleData(alpfb)
+MGpfb <- ScaleData(MGpfb)
+AEm <- AverageExpression(MGpfb, assays = "RNA", slot = "scale.data")
+AEh <- AverageExpression(alpfb, assays = "RNA", slot = "scale.data")
+AEM <- as.data.frame(AEm$RNA)
+AEH <- as.data.frame(AEh$RNA)
+hgenes <- rownames(AEH)
+
+human = useMart("ensembl", dataset = "hsapiens_gene_ensembl", host="https://dec2021.archive.ensembl.org/")
+mouse = useMart("ensembl", dataset = "mmusculus_gene_ensembl" , host="https://dec2021.archive.ensembl.org/")
+
+test <- getLDS(attributes = c("hgnc_symbol"), filters = "hgnc_symbol", 
+               values = hgenes , mart = human, attributesL = c("mgi_symbol"), 
+               martL = mouse, uniqueRows=T)
+
+id <- match(hgenes , test$HGNC.symbol)
+AEH$mgene <- test$MGI.symbol[id]
+non <- which(duplicated(AEH$mgene))
+AEH <- AEH[-non,]
+which(is.na(AEH$mgene))
+AEH <- AEH[-4,]
+rownames(AEH) <- AEH$mgene
+AEH[,5] <- NULL
+                        
+hAllgene <- rownames(AEH)
+mousegene <- rownames(AEM)
+genes.use <- intersect(hAllgene, mousegene)
+
+AEH <- AEH[genes.use, , drop=FALSE]
+AEM <- AEM[genes.use,]
+AEH <- AEH[, c(1,2,4,3)]
+AEM <- AEM[, c(1,3,4,2)]
+
+comball <- cbind(AEH, AEM)
+hcorrelation <- cor(comball, method = "spearman")
+trim <- hcorrelation[1:4, 5:8]
+pheatmap(trim, cluster_cols = F, cluster_rows = F)
+write.table(hcorrelation, file="hcorrelation.csv")
