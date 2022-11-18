@@ -151,7 +151,7 @@ library(SeuratWrappers)
 library(ggplot2)
 library(pheatmap)
                         
-MG <- readRDS(file = "MG.rds") #mouse seurat object
+MG <- readRDS(file = "MGcleaned.rds") #mouse seurat object
 alpfb <- readRDS(file = "alpfb.rds")
 MGpfb <- subset(MG, idents = c("Alveolar", "Inflammatory", "Stress-activated", "Fibrotic"))
                         
