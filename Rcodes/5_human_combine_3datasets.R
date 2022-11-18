@@ -57,7 +57,6 @@ saveRDS(Adams.alvp, file = "Adams.alvp.rds")
 
 ##load mesenchymal cell seurat object from Habermann et al.
 NVFB <- readRDS(file="NvFB.rds") ##this object was made by subsetting mesenchymal cells from the full size seurat object from GSE135893
-NVFB <- UpdateSeuratObject(NVFB)
 Idents(NVFB) <- "celltype"
 
 ##subset "Myofibroblasts" cluster that contains alveolar and pathologic fibroblasts. add metadata
@@ -102,10 +101,10 @@ FeaturePlot(HFBmgss, features = c("CTHRC1", "NPNT", "SFRP2", "SFRP4"))
 Meta_Highlight_Plot(seurat_object = HFBmgss, meta_data_column = "Tsukui_clusters", meta_data_highlight = "Fibrotic", highlight_color = "#E76BF3", background_color = "lightgray")
 Meta_Highlight_Plot(seurat_object = HFBmgss, meta_data_column = "Tsukui_clusters", meta_data_highlight = "Inflammatory1", highlight_color = "#00BF7D", background_color = "lightgray")
 Meta_Highlight_Plot(seurat_object = HFBmgss, meta_data_column = "Tsukui_clusters", meta_data_highlight = "Inflammatory2", highlight_color = "#00B0F6", background_color = "lightgray")
-Meta_Highlight_Plot(seurat_object = HFBmgss, meta_data_column = "Tsukui_clusters", meta_data_highlight = "Alveolar1", highlight_color = "#F8766D", background_color = "lightgray")
+Meta_Highlight_Plot(seurat_object = HFBmgss, meta_data_column = "Tsukui_clusters", meta_data_highlight = "Alveolar", highlight_color = "#F8766D", background_color = "lightgray")
 
 ##annotation
-new.cluster.ids <- c("Alveolar1", "Inflammatory1", "Fibrotic", "Inflammatory1", "Inflammatory2", "Alveolar2")
+new.cluster.ids <- c("Alveolar", "Inflammatory1", "Fibrotic", "Inflammatory1", "Inflammatory2", "Alveolar")
 names(new.cluster.ids) <- levels(HFBmgss)
 HFBmgss <- RenameIdents(HFBmgss, new.cluster.ids)
 saveRDS(HFBmgss, file = "HFBmgss.rds")
