@@ -87,12 +87,12 @@ MG <- FindNeighbors(MG, reduction = "mnn", dims = 1:38)
 MG <- FindClusters(MG, resolution = 0.3)
 DimPlot(MG, label = T)
 DimPlot(MG, split.by = "Day", label = T)
-saveRDS(MG, file = "MGcleaned.rds")
 
-annotation <- c("Alveolar1", "Fibrotic", "Alveolar2", "Inflammatory", "Adventitial", "Smooth muscle",
+annotation <- c("Alveolar", "Fibrotic", "Alveolar", "Inflammatory", "Adventitial", "Smooth muscle",
                      "Peribronchial", "Stress-activated", "Proliferating", "Mesothelial", "Pericyte")
 names(annotation) <- levels(MG)
 MG <- RenameIdents(MG, annotation)
+saveRDS(MG, file = "MGcleaned.rds")
 
 ##define tdTomato+ cells as tdTomato expression level>3.5
 poscells <- WhichCells(MG, expression = rna_tdTomato > 3.5)
@@ -118,12 +118,9 @@ library(kableExtra)
 library(knitr)
 library(gsfisher)
 
-MGpatho <- subset(x = MG, idents = c("Fibrotic", "Inflammatory", "Stress-activated"))
-saveRDS(MGpatho, file = "MGpatho.rds")
-
-MGpatho.markers <- FindAllMarkers(MGpatho, only.pos = TRUE, 
+MG.markers <- FindAllMarkers(MG, only.pos = TRUE, 
                                   min.pct = 0.25, logfc.threshold = 0.25)
-saveRDS(MGpatho.markers, "MGpathomarkers.rds")
+saveRDS(MG.markers, "MGmarkers.rds")
 
 getExpressedGenesFromSeuratObject <- function(seurat_object, 
                                               clusters, 
@@ -133,15 +130,15 @@ getExpressedGenesFromSeuratObject <- function(seurat_object,
   for(cluster in clusters)
   {
     
-    cluster_cells <- names(MGpatho$seurat_clusters[MGpatho$seurat_clusters==cluster])
-    clust_pcts <- apply(MGpatho@assays$RNA@counts[,cluster_cells], 
+    cluster_cells <- names(MG$seurat_clusters[MG$seurat_clusters==cluster])
+    clust_pcts <- apply(MG@assays$RNA@counts[,cluster_cells], 
                         1, function(x) sum(x>0)/length(x))
     
     detected_in_clust <- names(clust_pcts[clust_pcts>min.pct])
     
     
-    other_cells <- names(MGpatho$seurat_clusters[MGpatho$seurat_clusters!=cluster])
-    other_pcts <- apply(MGpatho@assays$RNA@counts[,other_cells], 
+    other_cells <- names(MG$seurat_clusters[MG$seurat_clusters!=cluster])
+    other_pcts <- apply(MG@assays$RNA@counts[,other_cells], 
                         1, function(x) sum(x>0)/length(x))
     
     detected_in_other_cells <- names(other_pcts[other_pcts>min.pct])
@@ -153,22 +150,22 @@ getExpressedGenesFromSeuratObject <- function(seurat_object,
 }
 
 expressed_genes <- getExpressedGenesFromSeuratObject(
-  MGpatho,unique(MGpatho$seurat_clusters), min.pct=0.25)
+  MG,unique(MG$seurat_clusters), min.pct=0.25)
 
 annotation <- fetchAnnotation(species="mm",
                               ensembl_version=NULL,
                               ensembl_host = NULL)
 
-MGpatho.markers$entrez_id <- as.character(annotation$entrez_id[
-  match(MGpatho.markers$gene, annotation$gene_name)])
-MGpatho.markers <- MGpatho.markers[!is.na(MGpatho.markers$entrez_id),]
+MG.markers$entrez_id <- as.character(annotation$entrez_id[
+  match(MG.markers$gene, annotation$gene_name)])
+MG.markers <- MG.markers[!is.na(MG.markers$entrez_id),]
 background_entrez <- as.character(annotation$entrez_id[
   match(expressed_genes, annotation$gene_name)])
 background_entrez <- background_entrez[!is.na(background_entrez)]
 
-MGpatho.markers.filtered <- MGpatho.markers[MGpatho.markers$p_val_adj < 0.05,]
+MG.markers.filtered <- MG.markers[MG.markers$p_val_adj < 0.05,]
 
-go.results <- runGO.all(results=MGpatho.markers.filtered, 
+go.results <- runGO.all(results=MG.markers.filtered, 
                         species = "mm",
                         background_ids = background_entrez,
                         gene_id_col="entrez_id",
@@ -176,7 +173,7 @@ go.results <- runGO.all(results=MGpatho.markers.filtered,
                         sample_col="cluster",
                         p_col="p_val_adj",
                         p_threshold=0.05)
-saveRDS(go.results, "go.results.MGpatho.rds")
+saveRDS(go.results, "go.results.MG.rds")
 
 go.results.filtered <- go.results[go.results$ontology=="BP",]
 go.results.filtered <- filterGenesets(go.results.filtered, 
