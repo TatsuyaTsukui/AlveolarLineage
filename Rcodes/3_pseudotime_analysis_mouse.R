@@ -100,12 +100,12 @@ ltr@meta.data$pseudotime <- pt
 ltr@meta.data$CellType <- Idents(ltr)
 ltr <- ScaleData(ltr)
 data.use <- data.frame(FetchData(ltr, vars = c("pseudotime", "CellType")), 
-                       t(ltr@assays$RNA@scale.data[c("Pdgfra", "Tcf21", "Saa3", "Lcn2", "Spp1", "Cthrc1"), ]))
+                       t(ltr@assays$RNA@scale.data[c("Pdgfra", "Tcf21", "Saa3", "Lcn2", "Postn", "Cthrc1"), ]))
 data.use$Cell <- rownames(data.use)
 data.usemod <- data.use %>% tidyr::gather(key="genes", value="value", -pseudotime, -CellType, -Cell)
-color1 <- "green4" 
-color2 <- "red"
-color3 <- "blue" 
+color1 <- "#56B4E9" 
+color2 <- "#E69F00"
+color3 <- "#009E73" 
 color4 <- "lightgrey" 
 
 p1 <- ggplot(data.use) +
@@ -114,7 +114,7 @@ p1 <- ggplot(data.use) +
   geom_smooth(aes(pseudotime, Tcf21), span = 0.75, method = "loess", color = color2) +
   geom_smooth(aes(pseudotime, Saa3), span = 0.75, method = "loess", color = color3) +
   geom_smooth(aes(pseudotime, Lcn2), span = 0.75, method = "loess", color = color3) +
-  geom_smooth(aes(pseudotime, Spp1), span = 0.75, method = "loess", color = color1) +
+  geom_smooth(aes(pseudotime, Postn), span = 0.75, method = "loess", color = color1) +
   geom_smooth(aes(pseudotime, Cthrc1), span = 0.75, method = "loess", color = color1) +
   scale_y_continuous(limits = c(-2, NA)) + xlab("Pseudotime") + ylab("expression") +
   theme(panel.border = element_blank(), panel.grid.major = element_blank(),
@@ -155,5 +155,5 @@ genes <- c("Pdgfra","Tcf21","Npnt","Inmt","Ces1d","Saa3","Lcn2","Sod2","Hp","Cxc
 pst.ord <- order(ltr.sce$slingPseudotime_1, na.last = NA)
 heatdata <- GetAssayData(ltr, slot = "scale.data")[genes, pst.ord]
 heatclus <- ltr.sce$ident[pst.ord]
-ha = HeatmapAnnotation( Cluster = heatclus,  col= list(Cluster = c("Alveolar" = "firebrick1", "Inflammatory" = "dodgerblue3", "Fibrotic" = "green3")))
+ha = HeatmapAnnotation( Cluster = heatclus,  col= list(Cluster = c("Alveolar" = "#E69F00", "Inflammatory" = "#009E73", "Fibrotic" = "#56B4E9")))
 Heatmap(heatdata, name = "Expression",  column_dend_reorder = FALSE, cluster_rows = FALSE, row_dend_reorder = FALSE, cluster_columns = FALSE, show_column_names = FALSE, top_annotation = ha)
