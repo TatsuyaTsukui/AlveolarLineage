@@ -13,6 +13,7 @@ library(biomaRt)
 
 #load seurat object of human mesenchymal cells from Tsukui et al. 2020
 #Email me tatsuya.tsukui@ucsf.edu if you need this seurat object
+#Update (June 25th,2025), hLung0827.rds can be downloaded on Zenodo https://zenodo.org/records/15330956 . See also our recent review https://pubmed.ncbi.nlm.nih.gov/40353369/
 hlin <- readRDS(file="hLung0827.rds")
 
 ##subset alveolar and pathologic fibroblasts
